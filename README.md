@@ -1,2 +1,3 @@
 # sqlcl-shell
-Emacs interaction with Oracle SqlCmdLine
+
+Emacs interaction with Oracle SQLcl command line utility.
