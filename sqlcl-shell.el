@@ -11,7 +11,7 @@
 ;; Maintainer: Ulf Hellström <oraminute@gmail.com>
 ;; Created: augusti 01, 2023
 ;; Modified: augusti 02, 2023
-;; Version: 0.0.3
+;; Version: 0.0.4
 ;; Keywords: languages lisp unix linux database oracle sqlcl
 ;; Homepage: https://github.com/uhellstr/sqlcl-shell.el
 ;; Package-Requires: ((emacs "27.1"))
@@ -160,7 +160,7 @@
     (unless buffer
       (funcall 'make-comint-in-buffer "SQLcl" buffer
              sqlcl-program nil sqlcl-proc-args)
-      (sqlcl-mode))))
+      (sqlcl-shell-mode))))
 
 (defun sqlcl-shell-initialize ()
   "Helper function to initialize Sqlcl"
@@ -174,14 +174,15 @@
   "Major mode for `run-sqlcl'. \\<sqlcl-mode-map>"
   nil "Sqlcl"
   ;; this sets up the prompt so it matches things like: SYSTEM @ XEPDB1
-  (setq comint-prompt-regexp sqlcl-prompt-regexp)
+  (setq comint-prompt-regexp sqlcl-shell-prompt-regexp)
   ;; this makes it read only; a contentious subject as some prefer the
   ;; buffer to be overwritable.
-  (setq comint-prompt-read-only t)
+  (setq comint-prompt-read-onl t)
   ;; this makes it so commands like M-{ and M-} work.
   (set (make-local-variable 'paragraph-separate) "\\'")
-  ;; (set (make-local-variable 'font-lock-defaults) '(sqlcl-font-lock-keywords t))
-  (set (make-local-variable 'paragraph-start) sqlcl-prompt-regexp))
+  (set (make-local-variable 'paragraph-start) sqlcl-shell-prompt-regexp)
+  (with-current-buffer "*SQLcl*"
+  (display-line-numbers-mode -1)))
 
 (add-hook 'sqlcl-mode-hook 'sqlcl-shell-initialize)
 
