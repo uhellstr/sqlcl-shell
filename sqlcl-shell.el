@@ -2,11 +2,16 @@
 ;;
 ;; Copyright (C) 2023 Ulf Hellström
 ;;
+;;       ___  ___  _       _
+;;      / __|/ _ \| |   __| |
+;;      \__ \ (_) | |__/ _| |
+;;      |___/\__\_\____\__|_|
+;;
 ;; Author: Ulf Hellström <oraminute@gmail.com> Epico Tech
 ;; Maintainer: Ulf Hellström <oraminute@gmail.com>
 ;; Created: augusti 01, 2023
-;; Modified: augusti 01, 2023
-;; Version: 0.0.2
+;; Modified: augusti 02, 2023
+;; Version: 0.0.3
 ;; Keywords: languages lisp unix linux database oracle sqlcl
 ;; Homepage: https://github.com/uhellstr/sqlcl-shell.el
 ;; Package-Requires: ((emacs "27.1"))
@@ -15,14 +20,14 @@
 ;;
 ;;; Commentary:
 ;;
-;;  This Emacs package allows you to connect to an Oracle database >= 11g
-;;  from within Emacs using Oracle SqlCmdLine on a Linux client.
+;;  This Emacs lisp library allows you to connect to an Oracle database >= 11g
+;;  from within Emacs using Oracle SQLcl on a Linux client.
 ;;
-;;  To install and setup SqlCmdLine you need.
+;;  To install and setup SQLcl you need.
 ;;  Oracle Java 11 or higher (Not garanteed that all functionality will work with OpenJDK)
-;;  Oracle Java is NOT licensed if runtime is used for SQLCmdLine.
+;;  Oracle Java is NOT licensed if runtime is used for SQLcl.
 ;;
-;;  Unzipped version of sqlcmdline
+;;  Unzipped version of SQLcl
 ;;  https://www.oracle.com/database/sqldeveloper/technologies/sqlcl/
 ;;
 ;;  There is no need of an Oracle Client installed since the connection is done
@@ -37,10 +42,10 @@
 ;;  Description
 ;;
 ;;  Before attemting to use this package.
-;;  Verify you can connect to your database(s) with SqlCMDLine using EZ-connect as described above.
+;;  Verify you can connect to your database(s) with SQLcl using EZ-connect as described above.
 ;;  Setup the following two environment variables
 ;;
-;;  SQLCL_PATH -> Should point to the directory where you unzipped your downloaded sqlCmdLine
+;;  SQLCL_PATH -> Should point to the directory where you unzipped your downloaded SQLcl
 ;;
 ;;  Example:
 ;;
@@ -50,7 +55,7 @@
 ;;
 ;;  You should also put the included login.sql to your SQLPATH (Default path for Oracle scripts)
 ;;  This file includes a specific login prompt that sqlcl.el looks for when passing and fetching
-;;  data between Emacs and sqlCmdLine so it a essential part of getting it to work.
+;;  data between Emacs and SQLcl so it a essential part of getting it to work.
 ;;
 ;;  In the example using Joe's home directory he uses ~/orascript (/home/joe/orascript) as the
 ;;  default directory for sql files.
@@ -71,7 +76,7 @@
 ;;
 ;;  Reload your Emacs config if necessary.
 ;;
-;;  To start an interactive sqlcmdline session from Emacs use
+;;  To start an interactive SQLcl session from Emacs use
 ;;
 ;;  M-x sqlcl-shell-run
 ;;
@@ -131,7 +136,7 @@
 
 ;; Function for building connection string
 (defun sqlcl-shell-get-oracle-connection-properties ()
-"Function for setting up a EZ-Connection string for SQLCmdline"
+"Function for setting up a EZ-Connection string for SQLcl"
         (sqlcl-shell-get-ora-username)
         (sqlcl-shell-get-ora-password)
         (sqlcl-shell-get-ora-hostname)
