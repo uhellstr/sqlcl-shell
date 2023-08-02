@@ -67,7 +67,7 @@
 ;;  since this package not yet is part of MELPA or any other public repository.
 ;;
 ;;  (add-to-list 'load-path "~/Documents/emacs-packages/sqlcl-shell")
-;;  ;; Initalize sqlcl-shell
+;;  ;; Initialize sqlcl-shell
 ;;  (require 'sqlcl-shell)
 ;;
 ;;  In the example with Joe it means we put the gitrepo for sqlcl-shell in
