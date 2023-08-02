@@ -43,10 +43,8 @@ You have a home directory /home/joe and you unzipped SQLcl under this directory.
 export SQLCL_PATH=/home/joe/sqlcl
 ```
 
-You should also put the included login.sql to your SQLPATH (Default path for Oracle scripts)
-This file includes a specific login prompt that sqlcl-shell.el looks for when passing and fetching
-data between Emacs and SQLcl so it a essential part of getting it to work. And it also
-gives you a better SQL prompt.
+If you want a better SQL prompt in SQLcl you should copy the included xlogin.sql to
+your preferd SQLPATH directory and rename it to login.sql
 
 In the example using Joe's home directory he uses ~/orascript (/home/joe/orascript) as the
 default directory for sql files.
