@@ -3,10 +3,10 @@
 Emacs interaction with Oracle SQLcl command line utility.
 
 
-This Emacs package allows you to connect to an Oracle database >= 11g
+This Emacs library allows you to connect to an Oracle database >= 11g
 from within Emacs using Oracle SQLcl command line utility on a Linux client.
 
-To install and setup SqlCmdLine you need.
+To install and setup SQLcl you need.
 Oracle Java 11 or higher (Not guaranteed that all functionality will work with OpenJDK)
 Oracle Java is NOT licensed if runtime is with SQLcl.
 
@@ -27,7 +27,7 @@ conn demo@//myhost:1521/MYDEMODB
 
 Description
 
-Before attempting to use this package.
+Before attempting to use this library.
 Verify you can connect to your database(s) with SQLcl using EZ-connect as described above.
 Setup the following two environment variables
 
@@ -56,16 +56,16 @@ export SQLPATH=/home/joe/orascript
 ```
 
 In your personal Emacs configuration file you need the following (change load-path accordingly)
-since this package not yet is part of MELPA or any other public repository.
+since this library not yet is part of MELPA or any other public repository.
 
 ```
-(add-to-list 'load-path "~/Documents/emacs-packages/sqlcl-shell")
+(add-to-list 'load-path "~/Documents/emacs-librarys/sqlcl-shell")
 ;; Initalize sqlcl-shell
 (require 'sqlcl-shell)
 ```
 
 In the example with Joe it means we put the gitrepo for sqlcl-shell in
-/home/joe/Documents/emacs-packages/sqlcl-shell
+/home/joe/Documents/emacs-librarys/sqlcl-shell
 
 Reload your Emacs config if necessary.
 
