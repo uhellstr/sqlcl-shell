@@ -6,16 +6,16 @@
 ;; Maintainer: Ulf Hellström <oraminute@gmail.com>
 ;; Created: augusti 01, 2023
 ;; Modified: augusti 01, 2023
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: languages lisp unix linux database oracle sqlcl
 ;; Homepage: https://github.com/uhellstr/sqlcl-shell.el
-;; Package-Requires: ((emacs "27.2"))
+;; Package-Requires: ((emacs "27.1"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; Commentary:
 ;;
-;;  This package allows you to connect to an Oracle database >= 11g
+;;  This Emacs package allows you to connect to an Oracle database >= 11g
 ;;  from within Emacs using Oracle SqlCmdLine on a Linux client.
 ;;
 ;;  To install and setup SqlCmdLine you need.
@@ -28,7 +28,7 @@
 ;;  There is no need of an Oracle Client installed since the connection is done
 ;;  using EZ-connect like conn <schema>@//host:port/SERVICE_NAME
 ;;
-;;  So if we have a schem demo on the host myhost with an Oracle Database listener on port 1521 and
+;;  So if we have a schema demo on the host myhost with an Oracle Database listener on port 1521 and
 ;;  a service called MYDEMODB the connection is done as
 ;;
 ;;  conn demo@//myhost:1521/MYDEMODB
@@ -59,7 +59,7 @@
 ;;
 ;;  export SQLPATH=/home/joe/orascript
 ;;
-;;  In your Emacs your personal Emacs configuration file you need to add something like the following
+;;  In your personal Emacs configuration file you need to add something like the following
 ;;  since this package not yet is part of MELPA or any other public repository.
 ;;
 ;;  (add-to-list 'load-path "~/Documents/emacs-packages/sqlcl-shell")
@@ -89,10 +89,10 @@
   (let ((map (nconc (make-sparse-keymap) comint-mode-map)))
     (define-key map "\t" 'completion-at-point)
     map)
-  "Basic mode map for sqlcl-run")
+  "Basic mode map for sqlcl-shell-run")
 
 ;; Define a regular expression for a SQL prompt like SYS @ XEPDB1 >
-(defvar sqlcl-shell-prompt-regexp "^([A-Z0-9]+)(\s*)@(\s*)([A-Z0-9]+)(\s*)>" "Prompt for `sqlcl-run'")
+(defvar sqlcl-shell-prompt-regexp "^([A-Z0-9]+)(\s*)@(\s*)([A-Z0-9]+)(\s*)>" "Prompt for `sqlcl-shell-run'")
 
 ;; Prompt for username
 (setq *my-ora-username* nil)
@@ -140,7 +140,7 @@
         (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename*)))
 
 (defun sqlcl-shell-run ()
-  "Run an inferior instance of `sqlcl' inside Emacs."
+  "Run an inferior instance of `SQLcl' inside Emacs."
   (interactive)
   (sqlcl-shell-get-oracle-connection-properties)
   (let* ((sqlcl-program sqlcl-shell-proc-path)
@@ -163,6 +163,7 @@
   (setq sqlcl-proc-args nil)
   (setq comint-process-echoes t)
   (setq comint-use-prompt-regexp t)
+  (setq mode-line-format nil)
   (add-hook 'comint-output-filter-functions #'(lambda (txt) (message txt))))
 
 (define-derived-mode sqlcl-shell-mode comint-mode "Sqlcl"
