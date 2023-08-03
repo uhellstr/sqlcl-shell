@@ -59,13 +59,13 @@ In your personal Emacs configuration file you need the following (change load-pa
 since this library not yet is part of MELPA or any other public repository.
 
 ```
-(add-to-list 'load-path "~/Documents/emacs-librarys/sqlcl-shell")
+(add-to-list 'load-path "~/Documents/emacs-packages/sqlcl-shell")
 ;; Initalize sqlcl-shell
 (require 'sqlcl-shell)
 ```
 
 In the example with Joe it means we put the gitrepo for sqlcl-shell in
-/home/joe/Documents/emacs-librarys/sqlcl-shell
+/home/joe/Documents/emacs-packages/sqlcl-shell
 
 Reload your Emacs config if necessary.
 
