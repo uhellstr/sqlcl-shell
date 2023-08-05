@@ -133,6 +133,12 @@
         (interactive)
         (setq *my-ora-servicename* (read-string "Oracle Servicename : ")))
 
+;; function to check for sys user
+(defun sqlcl-shell-is-sys-user-p ()
+  "Check if entered username is either sys or SYS"
+  (or (string-equal *my-ora-username* "sys")
+      (string-equal *my-ora-username* "SYS")))
+
 ;; Function for building connection string
 (defun sqlcl-shell-get-oracle-connection-properties ()
 "Function for setting up a EZ-Connection string for SQLcl"
@@ -141,7 +147,9 @@
         (sqlcl-shell-get-ora-hostname)
         (sqlcl-shell-get-ora-port)
         (sqlcl-shell-get-ora-service)
-        (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename*)))
+        (if (sqlcl-shell-is-sys-user-p)
+            (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename* " as sysdba"))
+         (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename*))))
 
 (defun sqlcl-shell-run ()
   "Run an inferior instance of `SQLcl' inside Emacs."
