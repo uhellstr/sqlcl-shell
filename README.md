@@ -8,7 +8,7 @@ from within Emacs using Oracle SQLcl command line utility on a Linux client.
 
 To install and setup SQLcl you need.
 Oracle Java 11 or higher (Not guaranteed that all functionality will work with OpenJDK)
-Oracle Java is NOT licensed if runtime is with SQLcl.
+Oracle Java is NOT licensed when used with SQLcl.
 
 Unzipped version of SQLcl
 https://www.oracle.com/database/sqldeveloper/technologies/sqlcl/
@@ -71,5 +71,5 @@ Reload your Emacs config if necessary.
 
 To start an interactive SQLcl session from Emacs use
 
-M-x sqlcl-shell-run
+M-x sqlcl-shell-run (where M is your Meta-key).
 
