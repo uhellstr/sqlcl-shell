@@ -1,6 +1,6 @@
 ;;; sqlcl-shell.el --- Description -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2023 Ulf Hellström
+;; Copyright (C) 2022-2023  Free Software Foundation, Inc.
 ;;
 ;;       ___  ___  _       _
 ;;      / __|/ _ \| |   __| |
@@ -11,16 +11,29 @@
 ;; Maintainer: Ulf Hellström <oraminute@gmail.com>
 ;; Created: augusti 01, 2023
 ;; Modified: augusti 02, 2023
-;; Version: 0.0.4
+;; Version: 1.0.0
 ;; Keywords: languages lisp unix linux database oracle sqlcl
 ;; Homepage: https://github.com/uhellstr/sqlcl-shell.el
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "28.1"))
 ;;
-;; This file is not part of GNU Emacs.
+;; This file is NOT part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.;
 ;;
 ;;; Commentary:
 ;;
-;;  This Emacs lisp library allows you to connect to an Oracle database >= 11g
+;;  This Emacs Lisp library allows you to connect to an Oracle database >= 11g
 ;;  from within Emacs using Oracle SQLcl on a Linux client.
 ;;
 ;;  To install and setup SQLcl you need.
@@ -43,6 +56,7 @@
 ;;
 ;;  Before attemting to use this package.
 ;;  Verify you can connect to your database(s) with SQLcl using EZ-connect as described above.
+;;
 ;;  Setup the following two environment variables
 ;;
 ;;  SQLCL_PATH -> Should point to the directory where you unzipped your downloaded SQLcl
@@ -64,7 +78,7 @@
 ;;  export SQLPATH=/home/joe/orascript
 ;;
 ;;  In your personal Emacs configuration file you need to add something like the following
-;;  since this package not yet is part of MELPA or any other public repository.
+;;  if downnloading from github.
 ;;
 ;;  (add-to-list 'load-path "~/Documents/emacs-packages/sqlcl-shell")
 ;;  ;; Initialize sqlcl-shell
@@ -84,24 +98,26 @@
 ;;
 ;;; Code:
 
+(require 'comint)
+
 (provide 'sqlcl-shell)
 
 (setq-default message-log-max nil)
 (setq sqlcl-binary (concat (getenv "SQLCL_PATH") "/bin/sql"))
-(defvar sqlcl-shell-proc-path sqlcl-binary "Path to the program used by sqlcl-run")
+(defvar sqlcl-shell-proc-path sqlcl-binary "Path to the program used by sqlcl-run.")
 (defvar sqlcl-shell-mode-map
   (let ((map (nconc (make-sparse-keymap) comint-mode-map)))
     (define-key map "\t" 'completion-at-point)
     map)
-  "Basic mode map for sqlcl-shell-run")
+  "Basic mode map for `sqlcl-shell-run'.")
 
 ;; Define a regular expression for a SQL prompt like SYS @ XEPDB1 >
-(defvar sqlcl-shell-prompt-regexp "^([A-Z0-9]+)(\s*)@(\s*)([A-Z0-9]+)(\s*)>" "Prompt for `sqlcl-shell-run'")
+(defvar sqlcl-shell-prompt-regexp "^([A-Z0-9]+)(\s*)@(\s*)([A-Z0-9]+)(\s*)>" "Prompt for `sqlcl-shell-run'.")
 
 ;; Prompt for username
 (setq *my-ora-username* nil)
 (defun sqlcl-shell-get-ora-username()
-"Prompt user for Oracle schema/username"
+"Prompt user for Oracle schema/username."
     (interactive)
     (setq *my-ora-username* (read-string "Username : ")))
 
@@ -115,33 +131,35 @@
 ;; Prompt for hostname
 (setq *my-ora-hostname* nil)
 (defun sqlcl-shell-get-ora-hostname()
-"Prompt user for Oracle Host or scan-listener"
+"Prompt user for Oracle Host or scan-listener."
     (interactive)
     (setq *my-ora-hostname* (read-string "Hostname : ")))
 
 ;; Prompt for listener port
 (setq *my-ora-portno* nil)
 (defun sqlcl-shell-get-ora-port()
-"Prompt user for Oracle Listener port"
-    (interactive)
-    (setq *my-ora-portno* (read-string "Oracle Listener Port : ")))
+  "Prompt user for Oracle Listener port."
+  (interactive)
+  (setq *my-ora-portno* (read-string "Oracle Listener Port default 1521 : "))
+  (when (string= *my-ora-portno* "")
+    (setq *my-ora-portno* "1521")))
 
 ;; Prompt for Service name
 (setq *my-ora-servicename* nil)
 (defun sqlcl-shell-get-ora-service ()
-"Prompt user for Oracle Servicename"
+"Prompt user for Oracle Servicename."
         (interactive)
         (setq *my-ora-servicename* (read-string "Oracle Servicename : ")))
 
 ;; function to check for sys user
 (defun sqlcl-shell-is-sys-user-p ()
-  "Check if entered username is either sys or SYS"
+  "Check if entered username is either sys or SYS."
   (or (string-equal *my-ora-username* "sys")
       (string-equal *my-ora-username* "SYS")))
 
 ;; Function for building connection string
 (defun sqlcl-shell-get-oracle-connection-properties ()
-"Function for setting up a EZ-Connection string for SQLcl"
+"Function for setting up a EZ-Connection string for SQLcl."
         (sqlcl-shell-get-ora-username)
         (sqlcl-shell-get-ora-password)
         (sqlcl-shell-get-ora-hostname)
@@ -171,7 +189,7 @@
       (sqlcl-shell-mode))))
 
 (defun sqlcl-shell-initialize ()
-  "Helper function to initialize Sqlcl"
+  "Helper function to initialize Sqlcl."
   (setq sqlcl-proc-args nil)
   (setq comint-process-echoes t)
   (setq comint-use-prompt-regexp t)
@@ -179,7 +197,7 @@
   (add-hook 'comint-output-filter-functions #'(lambda (txt) (message txt))))
 
 (define-derived-mode sqlcl-shell-mode comint-mode "Sqlcl"
-  "Major mode for `run-sqlcl'. \\<sqlcl-mode-map>"
+  "Major mode for `run-sqlcl'. \\<sqlcl-mode-map>."
   nil "Sqlcl"
   ;; this sets up the prompt so it matches things like: SYSTEM @ XEPDB1
   (setq comint-prompt-regexp sqlcl-shell-prompt-regexp)
