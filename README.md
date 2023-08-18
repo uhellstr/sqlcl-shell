@@ -3,7 +3,7 @@
 Emacs interaction with Oracle SQLcl command line utility.
 
 
-This Emacs library allows you to connect to an Oracle database >= 11g
+This Emacs package allows you to connect to an Oracle database >= 11g
 from within Emacs using Oracle SQLcl command line utility on a Linux client.
 
 To install and setup SQLcl you need.
@@ -25,7 +25,7 @@ a service called MYDEMODB the connection is done as
 conn demo@//myhost:1521/MYDEMODB
 ```
 
-Description
+## Description
 
 Before attempting to use this library.
 Verify you can connect to your database(s) with SQLcl using EZ-connect as described above.
@@ -73,3 +73,12 @@ To start an interactive SQLcl session from Emacs use
 
 M-x sqlcl-shell-run (where M is your Meta-key).
 
+## Need more connections ?
+
+If you need more then one connection you should do the following.
+Switch to the current opened *SQLcl* buffer.
+
+Then use `M-x rename-buffer` to rename `*SQLcl*` to something else like `sqlcl-hr-freepdb1` if you
+are connected to the HR schema on the FREEPDB1 database.
+
+Now you can invoke `M-x sqlcl-shell-run` and connect to another schema.
