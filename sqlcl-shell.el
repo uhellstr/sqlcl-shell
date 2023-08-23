@@ -157,17 +157,27 @@
   (or (string-equal *my-ora-username* "sys")
       (string-equal *my-ora-username* "SYS")))
 
+;; Function to check if nolog
+(defun sqlcl-shell-is-nolog-p ()
+  "Check if entered username is /nolog."
+  (or (string-equal *my-ora-username* "/NOLOG")
+      (string-equal *my-ora-username* "/nolog")))
+
 ;; Function for building connection string
+
 (defun sqlcl-shell-get-oracle-connection-properties ()
-"Function for setting up a EZ-Connection string for SQLcl."
-        (sqlcl-shell-get-ora-username)
-        (sqlcl-shell-get-ora-password)
-        (sqlcl-shell-get-ora-hostname)
-        (sqlcl-shell-get-ora-port)
-        (sqlcl-shell-get-ora-service)
-        (if (sqlcl-shell-is-sys-user-p)
-            (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename* " as sysdba"))
-         (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename*))))
+  "Function for setting up a EZ-Connection string for SQLcl."
+  (sqlcl-shell-get-ora-username)
+  (if (sqlcl-shell-is-nolog-p)
+      (setq sqlcl-proc-args "/nolog")
+    (progn
+      (sqlcl-shell-get-ora-password)
+      (sqlcl-shell-get-ora-hostname)
+      (sqlcl-shell-get-ora-port)
+      (sqlcl-shell-get-ora-service)
+      (if (sqlcl-shell-is-sys-user-p)
+          (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename* " as sysdba"))
+        (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename*))))))
 
 (defun sqlcl-shell-run ()
   "Run an inferior instance of `SQLcl' inside Emacs."
