@@ -11,7 +11,7 @@
 ;; Maintainer: Ulf Hellström <oraminute@gmail.com>
 ;; Created: augusti 01, 2023
 ;; Modified: augusti 02, 2023
-;; Version: 1.0.0
+;; Version: 1.0.1
 ;; Keywords: languages lisp unix linux database oracle sqlcl
 ;; Homepage: https://github.com/uhellstr/sqlcl-shell.el
 ;; Package-Requires: ((emacs "28.1"))
@@ -102,6 +102,9 @@
 
 (provide 'sqlcl-shell)
 
+;; Define the password prompt
+(setq comint-password-prompt-regexp "^Password[?]?.*\\(\\**\\)?")
+
 (setq-default message-log-max nil)
 (setq sqlcl-binary (concat (getenv "SQLCL_PATH") "/bin/sql"))
 (defvar sqlcl-shell-proc-path sqlcl-binary "Path to the program used by sqlcl-run.")
@@ -151,17 +154,15 @@
         (interactive)
         (setq *my-ora-servicename* (read-string "Oracle Servicename : ")))
 
-;; function to check for sys user
+;; Function to check for sys user
 (defun sqlcl-shell-is-sys-user-p ()
   "Check if entered username is either sys or SYS."
-  (or (string-equal *my-ora-username* "sys")
-      (string-equal *my-ora-username* "SYS")))
+  (string-equal (downcase *my-ora-username*) "sys"))
 
 ;; Function to check if nolog
 (defun sqlcl-shell-is-nolog-p ()
-  "Check if entered username is /nolog."
-  (or (string-equal *my-ora-username* "/NOLOG")
-      (string-equal *my-ora-username* "/nolog")))
+  "Check if entered username is /NOLOG or /nolog."
+  (string-equal (downcase *my-ora-username*) "/nolog"))
 
 ;; Function for building connection string
 
@@ -195,8 +196,13 @@
     ;; create the comint process if there is no buffer.
     (unless buffer
       (funcall 'make-comint-in-buffer "SQLcl" buffer
-             sqlcl-program nil sqlcl-proc-args)
-      (sqlcl-shell-mode))))
+               sqlcl-program nil sqlcl-proc-args)
+      (sqlcl-shell-mode))
+    ;; Configure password prompt handling
+    (setq-local comint-password-prompt-regexp "^Password[?]?.*\\(\\**\\)?")
+    (setq-local comint-password-hide-regexp "\\**")
+    (setq-local comint-password-inc-mask 0) ; Do not show '*' for entered password
+    ))
 
 (defun sqlcl-shell-initialize ()
   "Helper function to initialize Sqlcl."
