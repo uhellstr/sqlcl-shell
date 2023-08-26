@@ -82,3 +82,19 @@ Then use `M-x rename-buffer` to rename `*SQLcl*` to something else like `sqlcl-h
 are connected to the HR schema on the FREEPDB1 database.
 
 Now you can invoke `M-x sqlcl-shell-run` and connect to another schema.
+
+## History
+
+2023-08-26 Release 1.0.1
+
+Fixed issue with handling new connection within SQLcl where password entered was not hidden.
+Now `sqlcl-shell-run` uses `comint-password-prompt-regexp` and prompts for password correctly in hiden mode.
+
+Now also support login as /nolog when entering this as username SQLcl starts without any active connection.
+You can enter a new connection as:
+
+conn <username>@//<hostname>:<portno>/<service_name>
+
+Eaxmple:
+
+conn hr@//localhost:1521/freepdb1
