@@ -27,7 +27,7 @@ conn demo@//myhost:1521/MYDEMODB
 
 ## Description
 
-Before attempting to use this library.
+Before attempting to use this Emacs lisp package.
 Verify you can connect to your database(s) with SQLcl using EZ-connect as described above.
 Setup the following two environment variables
 
