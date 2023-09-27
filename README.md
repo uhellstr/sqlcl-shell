@@ -97,7 +97,7 @@ You can enter a new connection as:
 conn <username>@//<hostname>:<portno>/<service_name>
 ```
 
-Eaxmple:
+Example:
 
 ```
 conn hr@//localhost:1521/freepdb1
