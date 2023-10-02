@@ -106,7 +106,8 @@
 (setq comint-password-prompt-regexp "^Password[?]?.*\\(\\**\\)?")
 
 (setq-default message-log-max nil)
-(setq sqlcl-binary (concat (getenv "SQLCL_PATH") "/bin/sql"))
+
+(setq sqlcl-binary (concat  (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql"))
 (defvar sqlcl-shell-proc-path sqlcl-binary "Path to the program used by sqlcl-run.")
 (defvar sqlcl-shell-mode-map
   (let ((map (nconc (make-sparse-keymap) comint-mode-map)))
@@ -120,23 +121,23 @@
 ;; Prompt for username
 (setq *my-ora-username* nil)
 (defun sqlcl-shell-get-ora-username()
-"Prompt user for Oracle schema/username."
-    (interactive)
-    (setq *my-ora-username* (read-string "Username : ")))
+  "Prompt user for Oracle schema/username."
+  (interactive)
+  (setq *my-ora-username* (read-string "Username : ")))
 
 ;; Prompt for password
- (setq *my-ora-secret-password* nil)
- (defun sqlcl-shell-get-ora-password ()
- "Prompt user for a password"
-        (interactive)
-        (setq *my-ora-secret-password* (read-passwd "Password : ")))
+(setq *my-ora-secret-password* nil)
+(defun sqlcl-shell-get-ora-password ()
+  "Prompt user for a password"
+  (interactive)
+  (setq *my-ora-secret-password* (read-passwd "Password : ")))
 
 ;; Prompt for hostname
 (setq *my-ora-hostname* nil)
 (defun sqlcl-shell-get-ora-hostname()
-"Prompt user for Oracle Host or scan-listener."
-    (interactive)
-    (setq *my-ora-hostname* (read-string "Hostname : ")))
+  "Prompt user for Oracle Host or scan-listener."
+  (interactive)
+  (setq *my-ora-hostname* (read-string "Hostname : ")))
 
 ;; Prompt for listener port
 (setq *my-ora-portno* nil)
@@ -150,9 +151,9 @@
 ;; Prompt for Service name
 (setq *my-ora-servicename* nil)
 (defun sqlcl-shell-get-ora-service ()
-"Prompt user for Oracle Servicename."
-        (interactive)
-        (setq *my-ora-servicename* (read-string "Oracle Servicename : ")))
+  "Prompt user for Oracle Servicename."
+  (interactive)
+  (setq *my-ora-servicename* (read-string "Oracle Servicename : ")))
 
 ;; Function to check for sys user
 (defun sqlcl-shell-is-sys-user-p ()
@@ -224,7 +225,7 @@
   (set (make-local-variable 'paragraph-separate) "\\'")
   (set (make-local-variable 'paragraph-start) sqlcl-shell-prompt-regexp)
   (with-current-buffer "*SQLcl*"
-  (display-line-numbers-mode -1)))
+    (display-line-numbers-mode -1)))
 
 (add-hook 'sqlcl-mode-hook 'sqlcl-shell-initialize)
 
