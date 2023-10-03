@@ -102,3 +102,8 @@ Example:
 ```
 conn hr@//localhost:1521/freepdb1
 ```
+
+2023-10-03 Release 1.0.2
+
+Fixed in issue where Emacs getenv not alwasy find environment variables
+So changed method to more stable way of getting value of SQLCL_PATH variable
