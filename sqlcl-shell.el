@@ -108,6 +108,10 @@
 (setq-default message-log-max nil)
 
 (setq sqlcl-binary (concat  (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql"))
+(setq sql-editor "emacsclient -t")
+(setenv "EDITOR" sql-editor)
+;;(let ((sqlpath (shell-command-to-string "$SHELL --login -c 'echo -n $SQLPATH'")))
+;;  (if sqlpath (setenv "SQLPATH" sqlpath)))
 (defvar sqlcl-shell-proc-path sqlcl-binary "Path to the program used by sqlcl-run.")
 (defvar sqlcl-shell-mode-map
   (let ((map (nconc (make-sparse-keymap) comint-mode-map)))
