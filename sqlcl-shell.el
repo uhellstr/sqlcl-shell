@@ -107,11 +107,27 @@
 
 (setq-default message-log-max nil)
 
+;; Find path for SQLcl binary and add /bin/sql to base path for SQLCL_PATH
 (setq sqlcl-binary (concat  (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql"))
+;; Define customizable variable
+(defgroup sqlcl-shell-sql nil
+  "Define group for cutomizable variable"
+  :group 'convenience)
+(defcustom sqlcl-shell-sql-path "~/orascript"
+  "Deine SQLPATH for sqlcl-shell"
+  :type 'string
+  :group 'sqlcl-shell-sql
+  :local t)
+
+;; Set Oracle environment variable SQLPATH to value of customizable variable.
+(setenv "SQLPATH" sqlcl-shell-sql-path)
+;; Set wcd to SQLPATH
+(setq sqlcl-cwd (getenv "SQLPATH"))
+(cd sqlcl-cwd)
+;; Define emacsclient as default editor when using edit command in SQLcl.
 (setq sql-editor "emacsclient -t")
 (setenv "EDITOR" sql-editor)
-;;(let ((sqlpath (shell-command-to-string "$SHELL --login -c 'echo -n $SQLPATH'")))
-;;  (if sqlpath (setenv "SQLPATH" sqlpath)))
+;; Setup
 (defvar sqlcl-shell-proc-path sqlcl-binary "Path to the program used by sqlcl-run.")
 (defvar sqlcl-shell-mode-map
   (let ((map (nconc (make-sparse-keymap) comint-mode-map)))
