@@ -120,9 +120,9 @@
   :local t)
 
 ;; Set Oracle environment variable SQLPATH to value of customizable variable.
-(setenv "SQLPATH" sqlcl-shell-sql-path)
+(setenv "SQLPATH" (concat sqlcl-shell-sql-path ":."))
 ;; Set wcd to SQLPATH
-(setq sqlcl-cwd (getenv "SQLPATH"))
+(setq sqlcl-cwd sqlcl-shell-sql-path)
 (cd sqlcl-cwd)
 ;; Define emacsclient as default editor when using edit command in SQLcl.
 (setq sql-editor "emacsclient -t")
