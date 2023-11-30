@@ -108,7 +108,16 @@
 (setq-default message-log-max nil)
 
 ;; Find path for SQLcl binary and add /bin/sql to base path for SQLCL_PATH
-(setq sqlcl-binary (concat  (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql"))
+;; (setq sqlcl-binary
+;; Note: If you start Emacs as daemon you might need to hard code the path as below
+
+(setq sqlcl-binary
+      (substitute-in-file-name
+       (if (string= (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "")
+           ;; You might need to change the row below yourself
+           "/home/uhellstr/opt/instantclient_21_10/sqlcl/bin/sql"
+         (concat (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql" ))))
+
 ;; Define customizable variable
 (defgroup sqlcl-shell-sql nil
   "Define group for cutomizable variable"
