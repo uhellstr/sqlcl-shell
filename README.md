@@ -107,3 +107,19 @@ conn hr@//localhost:1521/freepdb1
 
 Fixed in issue where Emacs getenv not alwasy find environment variables
 So changed method to more stable way of getting value of SQLCL_PATH variable
+
+2023-11-30 Release  1.0.3
+
+There might be a problem readning environment variables like SQLCL_PATH if you run Emacs as a daemon.
+This means Emacs might not be able to see your environment correctly. Added an option to 
+"hardcode" the path to SQLcl. You can change that if SQLcl do not start in Emacs by changing
+the following code block to your location of SQLcl.
+
+```
+(setq sqlcl-binary
+      (substitute-in-file-name
+       (if (string= (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "")
+           ;; You might need to change the row below yourself
+           "/home/uhellstr/opt/instantclient_21_10/sqlcl/bin/sql" <-- Change this line to match location of SQLcl if SQLCL_PATH returns an empty string.
+         (concat (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql" ))))
+```
