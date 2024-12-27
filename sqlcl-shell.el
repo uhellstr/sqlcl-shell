@@ -65,7 +65,8 @@
 ;;
 ;;  You have a home directory /home/joe and you unzipped sqlcl under this directory.
 ;;
-;;  export SQLCL_PATH=/home/joe/sqlcl
+;;  export SQLCL_PATH=/home/joe/sqlcl/bin
+;;  export PATH=$PATH:$SQLCL_PATH
 ;;
 ;;  If you want a better SQL prompt in SQLcl you should copy the included xlogin.sql to
 ;;  your preferd SQLPATH directory and rename it to login.sql
@@ -108,29 +109,36 @@
 (setq-default message-log-max nil)
 
 ;; Find path for SQLcl binary and add /bin/sql to base path for SQLCL_PATH
-;; (setq sqlcl-binary
 ;; Note: If you start Emacs as daemon you might need to hard code the path as below
 
-(setq sqlcl-binary
-      (substitute-in-file-name
-       (if (string= (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "")
-           ;; You might need to change the row below yourself
-           "/home/uhellstr/opt/instantclient_21_10/sqlcl/bin/sql"
-         (concat (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql" ))))
+(defun sqlcl-shell-get-path ()
+  "Parse the PATH environment variable for the path containing sqlcl.
+Return the full path to the sqlcl directory if found.
+Raise an error if sqlcl is not found in PATH."
+  (let* ((path-env (getenv "PATH"))
+         (path-list (split-string path-env path-separator))
+         (sqlcl-path (seq-find (lambda (p) (string-match-p "sqlcl" p)) path-list)))
+    (if sqlcl-path
+        sqlcl-path
+      (error "The PATH variable does not contain 'sqlcl'"))))
+
+;; Example usage: Set the variable `sqlcl-binar` to the result of `sqlcl-get-path`
+(let ((sqlcl-path (sqlcl-shell-get-path)))
+  (setq sqlcl-binary (concat sqlcl-path "/sql")))
 
 ;; Define customizable variable
 (defgroup sqlcl-shell-sql nil
   "Define group for cutomizable variable"
   :group 'convenience)
 (defcustom sqlcl-shell-sql-path "~/orascript"
-  "Deine SQLPATH for sqlcl-shell"
+  "Define SQLPATH for sqlcl-shell"
   :type 'string
   :group 'sqlcl-shell-sql
   :local t)
 
 ;; Set Oracle environment variable SQLPATH to value of customizable variable.
 (setenv "SQLPATH" (concat sqlcl-shell-sql-path ":."))
-;; Set wcd to SQLPATH
+;; Set cwd to SQLPATH
 (setq sqlcl-cwd sqlcl-shell-sql-path)
 (cd sqlcl-cwd)
 ;; Define emacsclient as default editor when using edit command in SQLcl.
