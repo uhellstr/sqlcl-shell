@@ -32,7 +32,7 @@ Verify you can connect to your database(s) with SQLcl using EZ-connect as descri
 Setup the following two environment variables
 
 ```
-SQLCL_PATH -> Should point to the directory where you unzipped your downloaded SQLcl.
+SQLCL_PATH -> Should point to the 'bin' directory where you unzipped your downloaded SQLcl.
 ```
 
 Example:
@@ -40,7 +40,7 @@ Example:
 You have a home directory /home/joe and you unzipped SQLcl under this directory.
 
 ```
-export SQLCL_PATH=/home/joe/sqlcl
+export SQLCL_PATH=/home/joe/sqlcl/bin
 ```
 
 If you want a better SQL prompt in SQLcl you should copy the included xlogin.sql to
@@ -123,3 +123,8 @@ the following code block to your location of SQLcl.
            "/home/uhellstr/opt/instantclient_21_10/sqlcl/bin/sql" <-- Change this line to match location of SQLcl if SQLCL_PATH returns an empty string.
          (concat (shell-command-to-string "$SHELL --login -c 'echo -n $SQLCL_PATH'") "/bin/sql" ))))
 ```
+
+2024-12-27 Release  1.0.4
+
+Complete rewrite how we get the PATH to sql binary no need for using any personal modifications from
+last release 1.0.3 anymore. You still need to have "../bin" in your PATH variable.
