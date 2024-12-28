@@ -122,8 +122,8 @@ Raise an error if sqlcl is not found in PATH."
         sqlcl-path
       (error "The PATH variable does not contain 'sqlcl'"))))
 
-;; Example usage: Set the variable `sqlcl-binar` to the result of `sqlcl-get-path`
 (let ((sqlcl-path (sqlcl-shell-get-path)))
+  "Add the SQLcl executable to the PATH."
   (setq sqlcl-binary (concat sqlcl-path "/sql")))
 
 ;; Define customizable variable
