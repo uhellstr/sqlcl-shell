@@ -83,6 +83,39 @@ are connected to the HR schema on the FREEPDB1 database.
 
 Now you can invoke `M-x sqlcl-shell-run` and connect to another schema.
 
+## Editing SQL and send code to the SQLcl buffer.
+
+You probably will edit your SQL and PL/SQL code in another editor using the SQL syntax highlighting provided by sql.el
+If you use SQLcl rather then SQL*PLUS you can add the following code to your emacs config file to be able to
+send your SQL text over the '*SQLCL*' buffer.
+
+```
+(defun sqlcl-send-region-or-buffer (start end)
+  "Send the selected region or the entire buffer to the SQLcl process.
+If a region is active, send it. Otherwise, send the whole buffer."
+  (interactive "r")
+  ;; Ensure the *SQLcl* buffer exists and get the process.
+  (let ((sqlcl-buffer (get-buffer "*SQLcl*")))
+    (if (not sqlcl-buffer)
+        (message "SQLcl buffer not found. Make sure `sqlcl-shell.el` is running.")
+      (let ((sqlcl-process (get-buffer-process sqlcl-buffer)))
+        (if (not sqlcl-process)
+            (message "SQLcl process is not active.")
+          (let ((text (if (use-region-p)
+                          (buffer-substring-no-properties start end)
+                        (buffer-substring-no-properties (point-min) (point-max)))))
+            ;; Switch to the SQLcl buffer and send the text.
+            (with-current-buffer sqlcl-buffer
+              (goto-char (point-max)) ; Move to the end of the buffer.
+              (insert text)           ; Insert the text.
+              (comint-send-input))    ; Send the input to the process.
+            (message "Text sent to SQLcl.")))))))
+
+;; Optional: Bind this function to a convenient key.
+(global-set-key (kbd "C-c s") 'sqlcl-send-region-or-buffer)
+```
+
+
 ## History
 
 2023-08-26 Release 1.0.1
@@ -128,3 +161,8 @@ the following code block to your location of SQLcl.
 
 Complete rewrite how we get the PATH to sql binary no need for using any personal modifications from
 last release 1.0.3 anymore. You still need to have "../bin" in your PATH variable.
+
+2024-12-29 Release 1.0.5
+
+Better cursor point handling , but still not perfect some more work is needed.
+Added example on how to copy SQL code over to the SQLcl buffer from another buffer in README.md

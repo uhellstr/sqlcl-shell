@@ -87,7 +87,7 @@
 ;;
 ;;  In the example with Joe it means we put the gitrepo for sqlcl-shell in
 ;;  /home/joe/Documents/emacs-packages/sqlcl-shell
-;;
+                                        ;
 ;;  Reload your Emacs config if necessary.
 ;;
 ;;  To start an interactive SQLcl session from Emacs use
