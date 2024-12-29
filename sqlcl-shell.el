@@ -103,9 +103,15 @@
 
 (provide 'sqlcl-shell)
 
+;; Stores the cursor position for the SQLcl shell buffer.
+(defvar sqlcl-shell-cursor-position nil)
+
+;; Prevent comint from overriding point movement.
+(setq comint-scroll-to-bottom-on-output nil)
+(setq comint-move-point-for-output nil)
+
 ;; Define the password prompt
 (setq comint-password-prompt-regexp "^Password[?]?.*\\(\\**\\)?")
-
 (setq-default message-log-max nil)
 
 ;; Find path for SQLcl binary and add /bin/sql to base path for SQLCL_PATH
@@ -218,6 +224,23 @@ Raise an error if sqlcl is not found in PATH."
           (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename* " as sysdba"))
         (setq sqlcl-proc-args (concat *my-ora-username* "/" *my-ora-secret-password* "@//" *my-ora-hostname* ":" *my-ora-portno* "/" *my-ora-servicename*))))))
 
+(defun sqlcl-shell-save-sqlcl-shell-cursor-position ()
+  "Save the cursor position in the SQLcl shell buffer."
+  (when (eq major-mode 'sqlcl-shell-mode)
+    (setq sqlcl-shell-cursor-position (point))))
+
+(defun sqlcl-shell-restore-sqlcl-shell-cursor-position ()
+  "Restore the cursor position in the SQLcl shell buffer."
+  (when (and (eq major-mode 'sqlcl-shell-mode)
+             sqlcl-shell-cursor-position)
+    (goto-char sqlcl-shell-cursor-position)))
+
+(defun sqlcl-shell-sqlcl-sync-cursor-position (output)
+  "Synchronize Emacs cursor with SQLcl's cursor based on OUTPUT."
+  (when (string-match sqlcl-shell-prompt-regexp output)
+    ;; Move the cursor to the end of the buffer where SQLcl is waiting for input.
+    (goto-char (point-max))))
+
 (defun sqlcl-shell-run ()
   "Run an inferior instance of `SQLcl' inside Emacs."
   (interactive)
@@ -248,7 +271,8 @@ Raise an error if sqlcl is not found in PATH."
   (setq comint-process-echoes t)
   (setq comint-use-prompt-regexp t)
   (setq mode-line-format nil)
-  (add-hook 'comint-output-filter-functions #'(lambda (txt) (message txt))))
+  ;; (add-hook 'comint-output-filter-functions #'(lambda (txt) (message txt)))
+  (add-hook 'comint-output-filter-functions 'sqlcl-shell-sqlcl-sync-cursor-position))
 
 (define-derived-mode sqlcl-shell-mode comint-mode "Sqlcl"
   "Major mode for `run-sqlcl'. \\<sqlcl-mode-map>."
@@ -265,5 +289,9 @@ Raise an error if sqlcl is not found in PATH."
     (display-line-numbers-mode -1)))
 
 (add-hook 'sqlcl-mode-hook 'sqlcl-shell-initialize)
+(add-hook 'kill-buffer-hook 'sqlcl-shell-save-sqlcl-shell-cursor-position)
+(add-hook 'sqlcl-shell-mode-hook 'sqlcl-shell-restore-sqlcl-shell-cursor-position)
+
+
 
 ;;; sqlcl-shell.el ends here
