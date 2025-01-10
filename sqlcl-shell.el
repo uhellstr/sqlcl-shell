@@ -226,13 +226,12 @@ Raise an error if sqlcl is not found in PATH."
 
 (defun sqlcl-shell-save-sqlcl-shell-cursor-position ()
   "Save the cursor position in the SQLcl shell buffer."
-  (when (eq major-mode 'sqlcl-shell-mode)
+  (when (and (eq major-mode 'sqlcl-shell-mode) (eq (current-buffer) (window-buffer)))
     (setq sqlcl-shell-cursor-position (point))))
 
 (defun sqlcl-shell-restore-sqlcl-shell-cursor-position ()
   "Restore the cursor position in the SQLcl shell buffer."
-  (when (and (eq major-mode 'sqlcl-shell-mode)
-             sqlcl-shell-cursor-position)
+  (when (and (eq major-mode 'sqlcl-shell-mode) sqlcl-shell-cursor-position)
     (goto-char sqlcl-shell-cursor-position)))
 
 (defun sqlcl-shell-sqlcl-sync-cursor-position (output)
@@ -240,6 +239,16 @@ Raise an error if sqlcl is not found in PATH."
   (when (string-match sqlcl-shell-prompt-regexp output)
     ;; Move the cursor to the end of the buffer where SQLcl is waiting for input.
     (goto-char (point-max))))
+
+(defun sqlcl-shell-prevent-comint-cursor-movement (output)
+  "Prevent comint from moving the cursor arbitrarily."
+  (unless (eq (current-buffer) (window-buffer))
+    (goto-char sqlcl-shell-cursor-position)))
+
+(defun sqlcl-shell-track-cursor-position ()
+  "Track the cursor position in the SQLcl shell buffer."
+  (when (eq major-mode 'sqlcl-shell-mode)
+    (setq sqlcl-shell-cursor-position (point))))
 
 (defun sqlcl-shell-run ()
   "Run an inferior instance of `SQLcl' inside Emacs."
@@ -281,7 +290,7 @@ Raise an error if sqlcl is not found in PATH."
   (setq comint-prompt-regexp sqlcl-shell-prompt-regexp)
   ;; this makes it read only; a contentious subject as some prefer the
   ;; buffer to be overwritable.
-  (setq comint-prompt-read-onl t)
+  (setq comint-prompt-read-only t)
   ;; this makes it so commands like M-{ and M-} work.
   (set (make-local-variable 'paragraph-separate) "\\'")
   (set (make-local-variable 'paragraph-start) sqlcl-shell-prompt-regexp)
@@ -289,9 +298,10 @@ Raise an error if sqlcl is not found in PATH."
     (display-line-numbers-mode -1)))
 
 (add-hook 'sqlcl-mode-hook 'sqlcl-shell-initialize)
-(add-hook 'kill-buffer-hook 'sqlcl-shell-save-sqlcl-shell-cursor-position)
-(add-hook 'sqlcl-shell-mode-hook 'sqlcl-shell-restore-sqlcl-shell-cursor-position)
-
-
+;; Add hooks to save and restore cursor position dynamically
+(add-hook 'buffer-list-update-hook 'sqlcl-shell-save-sqlcl-shell-cursor-position)
+(add-hook 'window-configuration-change-hook 'sqlcl-shell-restore-sqlcl-shell-cursor-position)
+(add-hook 'comint-output-filter-functions 'sqlcl-shell-prevent-comint-cursor-movement)
+(add-hook 'post-command-hook 'sqlcl-shell-track-cursor-position)
 
 ;;; sqlcl-shell.el ends here
