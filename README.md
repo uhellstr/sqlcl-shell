@@ -166,3 +166,7 @@ last release 1.0.3 anymore. You still need to have "../bin" in your PATH variabl
 
 Better cursor point handling , but still not perfect some more work is needed.
 Added example on how to copy SQL code over to the SQLcl buffer from another buffer in README.md
+
+2025-01-10 Release 1.0.6
+
+Finally fixed cursor point handling. Cursor stays in place where you where when switching from and to the SQLcl buffer in Emacs.
